@@ -52,36 +52,43 @@ class TokenInterceptor : Interceptor {
     @Synchronized
     private fun getToken(): String? {
         var token: String? = null
-        if (UserData.getInstance().user == null) {
-            return null
-        }
-        val expiration =
-            UserData.getInstance().user.expiration - 10 * 60 * 1000 //提前10分钟（后端正式配置8小时过期，提前10分钟刷新token即可）
+        val user = UserData.instance.getUser() ?: return null
+        val expiration = user.expiration - 10 * 60 * 1000 //提前10分钟（后端正式配置8小时过期，提前10分钟刷新token即可）
         LogUtil.i("======过期时间是：" + Date(expiration).toString())
         LogUtil.i("======当前时间是：" + Date(System.currentTimeMillis()).toString())
         //本地判断token过期
         if (Date(expiration).before(Date())) {
-            LogUtil.e("已过期，需要去刷新token")
+            LogUtil.e("token已过期，需要去刷新token")
+            val refreshToken = user.refreshToken ?: return null
             val call = ApiUtil.instance
                 .apiService
-                .refreshToken(UserData.getInstance().user.refreshToken)
+                .refreshToken(refreshToken)
             var resultBean: ResultBean<UserBean>? = null
             try {
                 resultBean = call.execute().body()
             } catch (e: IOException) {
                 e.printStackTrace()
             } finally {
-                if (resultBean != null && resultBean.code == "10000" && resultBean.data != null) {
-                    LogUtil.e("======刷新token成功")
-                    UserData.getInstance().saveUser(resultBean.data)
-                    token =
-                        UserData.getInstance().user.tokenHeader + UserData.getInstance().user.accessToken
+                if (resultBean != null && resultBean.code == "10000") {
+                    val data = resultBean.data
+                    if (data != null) {
+                        LogUtil.e("======刷新token成功")
+                        UserData.instance.saveUser(data)
+                        val userBean = UserData.instance.getUser()
+                        if (userBean != null) {
+                            val tokenHeader = userBean.tokenHeader
+                            val accessToken = userBean.accessToken
+                            if (tokenHeader != null && accessToken != null)
+                                token = tokenHeader + accessToken
+                        }
+                    }
                 }
             }
         } else {
-            LogUtil.i("======token未过期")
-            token =
-                UserData.getInstance().user.tokenHeader + UserData.getInstance().user.accessToken
+            val tokenHeader = user.tokenHeader
+            val accessToken = user.accessToken
+            if (tokenHeader != null && accessToken != null)
+                token = tokenHeader + accessToken
         }
         return token
     }
@@ -98,7 +105,7 @@ class TokenInterceptor : Interceptor {
     private fun clearAndLogin() {//子线程
         if (isLoginPage) return
         ApiUtil.instance.cancelAll()
-        UserData.getInstance().clearUser()
+        UserData.instance.clearUser()
         val topActivity = BaseApplication.instance.topActivity
         topActivity?.startActivity(
             Intent(

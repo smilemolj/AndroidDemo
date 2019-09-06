@@ -26,8 +26,8 @@ class UserListViewHolder(parent: ViewGroup, private val mOnEditClickListener: On
         nickTV.text = String.format("昵称:%s", data.nickName)
         phoneTV.text = String.format("手机:%s", data.phone)
         emailTV.text = String.format("邮箱:%s", data.email)
-        deleteBTN.setOnClickListener { v -> mOnEditClickListener.onDeleteClick(adapterPosition) }
-        modifyBTN.setOnClickListener { v -> mOnEditClickListener.onModifyClick(adapterPosition) }
+        deleteBTN.setOnClickListener { mOnEditClickListener.onDeleteClick(adapterPosition) }
+        modifyBTN.setOnClickListener { mOnEditClickListener.onModifyClick(adapterPosition) }
     }
 
     interface OnEditClickListener {

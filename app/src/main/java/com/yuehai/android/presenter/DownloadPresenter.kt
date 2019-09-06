@@ -45,7 +45,8 @@ class DownloadPresenter(view: DownloadContract.View) : BasePresenter<DownloadCon
             view?.showToast("下载地址格式错误！")
             return
         }
-        DownloadUtil.download(url,
+        DownloadUtil.download(
+            url,
             Headers.Builder()
                 .add(TokenInterceptor.HEADER_NO_TOKEN)
                 .build(),
@@ -59,6 +60,7 @@ class DownloadPresenter(view: DownloadContract.View) : BasePresenter<DownloadCon
 
                 override fun onError(message: String) {
                     view?.dismissLoading()
+                    view?.showToast(message)
                     view?.setMessage("下载失败：$message")
                 }
 
@@ -66,10 +68,15 @@ class DownloadPresenter(view: DownloadContract.View) : BasePresenter<DownloadCon
                     view?.showToast("下载成功！")
                     view?.setMessage("下载成功！\n文件大小：${f.length() / 1024 / 1024}M\n文件路径：${f.absolutePath}")
                 }
-            })
+            }, this
+        )
     }
 
     override fun onProgress(currentLength: Long, totalLength: Long) {
         view?.setProgressValue((currentLength * 100 / totalLength).toInt())
+    }
+
+    override fun onBack() {
+        DownloadUtil.cancelDownload(this)
     }
 }

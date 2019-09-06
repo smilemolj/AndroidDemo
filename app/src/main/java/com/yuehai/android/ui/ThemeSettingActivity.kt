@@ -30,7 +30,7 @@ class ThemeSettingActivity : BaseMvpActivity<ThemeSettingContract.Presenter>(),
 
     override fun init() {
         super.init()
-        theme_switch.setOnCheckedChangeListener { compoundButton, b ->
+        theme_switch.setOnCheckedChangeListener { _, _ ->
             SkinManager.getInstance().changeSkin(
                 mSkinPkgPath,
                 "com.imooc.skin_plugin",

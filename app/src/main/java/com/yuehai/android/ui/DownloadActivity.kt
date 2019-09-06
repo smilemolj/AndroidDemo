@@ -67,4 +67,15 @@ class DownloadActivity : BaseMvpActivity<DownloadContract.Presenter>(), Download
             result_tv.text = "文件下载中------$progress%"
         }
     }
+
+
+    override fun onBackPressed() {
+        presenter.onBack()
+        super.onBackPressed()
+    }
+
+    override fun onToolbarBack() {
+        presenter.onBack()
+        super.onToolbarBack()
+    }
 }

@@ -30,5 +30,7 @@ interface DownloadContract {
 
     interface Presenter : IBasePresenter {
         fun download(url: String)
+
+        fun onBack()
     }
 }

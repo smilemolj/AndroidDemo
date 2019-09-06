@@ -37,7 +37,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun checkUser() {
-        val user = UserData.getInstance().user
+        val user = UserData.instance.getUser()
         if (user != null) {
             test_btn0.visibility = View.GONE
             test_btn1.visibility = View.VISIBLE
@@ -54,7 +54,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         when (v.id) {
             R.id.test_btn0 -> startActivityForResult(Intent(this, LoginActivity::class.java), 1000)
             R.id.test_btn1 -> {
-                UserData.getInstance().clearUser()
+                UserData.instance.clearUser()
                 checkUser()
             }
             R.id.test_btn2 -> startActivity(Intent(this@MainActivity, UserListActivity::class.java))

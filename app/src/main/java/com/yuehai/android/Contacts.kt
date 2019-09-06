@@ -5,9 +5,9 @@ package com.yuehai.android
  */
 interface Contacts {
     companion object {
-        val SP_NAME = "AndroidDemo"
-        val LOGIN_NAME = "LOGIN_NAME"
-        val LOG_TAG = "AndroidDemo"
+        const val SP_NAME = "AndroidDemo"
+        const val LOGIN_NAME = "LOGIN_NAME"
+        const val LOG_TAG = "AndroidDemo"
         val DOWNLOAD_PATH_NAMES = arrayOf("yuehai", "download")
     }
 

@@ -1,11 +1,12 @@
 package library.net
 
-import library.net.exception.ApiException
 import io.reactivex.Observer
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableContainer
+import library.net.exception.ApiException
 import retrofit2.HttpException
+import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
@@ -33,13 +34,15 @@ abstract class ResultObserver<T> constructor(private var container: DisposableCo
     final override fun onError(e: Throwable) {
         when (e) {
             is ApiException -> //自定义异常
-                onError(e.message.toString())
+                onError(e.message ?: "请求失败")
             is ConnectException -> //手机没连上网的情况
                 onError("网络异常，请检查网络后重试")
             is HttpException -> //404 500 服务器连接错误
                 onError("服务器连接异常")
             is SocketTimeoutException -> //连上网，连接超时无响应
                 onError("请求超时")
+            is IOException ->//文件读写问题
+                onError(e.message ?: "请求失败")
             else -> onError("请求失败")
         }
         clearDisposable()

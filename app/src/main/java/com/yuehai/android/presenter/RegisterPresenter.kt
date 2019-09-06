@@ -44,9 +44,7 @@ class RegisterPresenter(view: RegisterContract.View) : BasePresenter<RegisterCon
                 override fun onNext(result: ResultBean<Long>) {
                     view?.showToast(result.message)
                     view?.dismissLoading()
-                    if (result.isSuccess) {
-                        view?.onRegisterSuccess(userName, result.data)
-                    }
+                    view?.onRegisterSuccess(userName, result.data)
                 }
 
                 override fun onError(message: String) {
@@ -70,9 +68,7 @@ class RegisterPresenter(view: RegisterContract.View) : BasePresenter<RegisterCon
                 override fun onNext(result: ResultBean<Any>) {
                     view?.showToast(result.message)
                     view?.dismissLoading()
-                    if (result.isSuccess) {
-                        view?.onModifySuccess()
-                    }
+                    view?.onModifySuccess()
                 }
 
                 override fun onError(message: String) {

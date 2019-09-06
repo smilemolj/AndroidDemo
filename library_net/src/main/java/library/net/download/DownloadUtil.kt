@@ -26,15 +26,17 @@ object DownloadUtil {
      *
      * @param listener 注意此回调发生在子线程
      * @param observer 建议使用[ResultObserver]
+     * @param tag 取消下载时需要设置此tag 调用 fun cancelDownload(tag: Any)时传入
      */
     fun download(
         url: String,
         pathNames: Array<String>,
         fileName: String,
         listener: DownloadListener,
-        observer: Observer<File>
+        observer: Observer<File>,
+        tag: Any? = null
     ) {
-        download(url, null, pathNames, fileName, listener, observer)
+        download(url, null, pathNames, fileName, listener, observer, tag)
     }
 
     /**
@@ -45,6 +47,7 @@ object DownloadUtil {
      *
      * @param listener 注意此回调发生在子线程
      * @param observer 建议使用[ResultObserver]
+     * @param tag 取消下载时需要设置此tag 调用 fun cancelDownload(tag: Any)时传入
      */
     fun download(
         url: String,
@@ -52,15 +55,18 @@ object DownloadUtil {
         pathNames: Array<String>,
         fileName: String,
         listener: DownloadListener,
-        observer: Observer<File>
+        observer: Observer<File>,
+        tag: Any? = null
     ) {
         Observable.create(ObservableOnSubscribe<ResponseBody> { emitter ->
             val builder = Request.Builder()
             if (headers != null) builder.headers(headers)
+            if (tag != null) builder.tag(tag.javaClass, tag)
             val request = builder
                 .tag(DownloadListener::class.java, listener)
                 .url(url)
                 .get()
+
                 .build()
             val responseBody = NetHelper.instance//okHttp同步下载
                 .oKHttpClient()
@@ -84,5 +90,28 @@ object DownloadUtil {
             }
             .compose(RxUtil.io_main())
             .subscribe(observer)
+    }
+
+    /**
+     * 取消下载
+     */
+    fun cancelDownload(tag: Any) {
+        val dispatcher = NetHelper.instance
+            .oKHttpClient()
+            .dispatcher()
+        if (dispatcher.runningCallsCount() > 0) {
+            for (call in dispatcher.runningCalls()) {
+                if (tag == call.request().tag(tag.javaClass)) {
+                    call.cancel()
+                }
+            }
+        }
+        if (dispatcher.queuedCallsCount() > 0) {
+            for (call in dispatcher.queuedCalls()) {
+                if (tag == call.request().tag(tag.javaClass)) {
+                    call.cancel()
+                }
+            }
+        }
     }
 }

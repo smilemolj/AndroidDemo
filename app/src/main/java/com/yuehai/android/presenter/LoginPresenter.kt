@@ -50,8 +50,9 @@ class LoginPresenter(view: LoginContract.View) : BasePresenter<LoginContract.Vie
                 override fun onNext(bean: ResultBean<UserBean>) {
                     view?.dismissLoading()
                     view?.showToast(bean.message)
-                    if (bean.isSuccess) {
-                        UserData.getInstance().saveUser(bean.data)
+                    val data = bean.data
+                    if (data != null) {
+                        UserData.instance.saveUser(data)
                         view?.onLoginSuccess()
                     }
                 }

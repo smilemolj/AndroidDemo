@@ -6,10 +6,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import com.yuehai.android.R
 import com.yuehai.android.contract.UserListContract
-import com.yuehai.android.net.response.ResultBean
 import com.yuehai.android.net.response.UserForListBean
 import com.yuehai.android.presenter.UserListPresenter
 import com.yuehai.android.ui.adapter.UserListViewHolder
@@ -18,7 +16,6 @@ import com.yuehai.android.widget.recyclerhelper.BaseViewHolder
 import com.yuehai.android.widget.recyclerhelper.CommonRecycleAdapter
 import com.yuehai.android.widget.recyclerhelper.MyDividerItemDecoration
 import kotlinx.android.synthetic.main.activity_user_list.*
-
 import library.base.BaseMvpActivity
 
 /**
@@ -83,19 +80,24 @@ class UserListActivity : BaseMvpActivity<UserListContract.Presenter>(), UserList
         }
     }
 
-    override fun showData(result: ResultBean<List<UserForListBean>>?, isClear: Boolean) {
-        if (isClear) adapter.clear()
-        if (result != null) {
-            if (result.data.isNotEmpty()) {
-                adapter.addAll(result.data)
-                smart_rl.finishLoadMore(true)
+    override fun showData(data: List<UserForListBean>?, isRefresh: Boolean) {
+        if (data.isNullOrEmpty()) {
+            if (isRefresh) {
+                adapter.clear()
+                smart_rl.finishRefresh()
             } else {
                 smart_rl.finishLoadMoreWithNoMoreData()
             }
-            smart_rl.finishRefresh()
         } else {
-            smart_rl.finishLoadMore(false)
-            smart_rl.finishRefresh(false)
+            if (isRefresh) {
+                adapter.clear()
+                adapter.addAll(data)
+                smart_rl.finishRefresh()
+            } else {
+                adapter.addAll(data)
+                smart_rl.finishLoadMore(true)
+            }
+            smart_rl.setNoMoreData(false)//恢复有数据状态
         }
     }
 

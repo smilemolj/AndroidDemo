@@ -24,20 +24,20 @@ class UserListPresenter(view: UserListContract.View) : BasePresenter<UserListCon
     override fun onCreate() {
         super.onCreate()
         view?.showLoading()
-        loadData()
+        loadData(false)
     }
 
     override fun onLoadMore(refreshLayout: RefreshLayout) {
         pageNum++
-        loadData()
+        loadData(false)
     }
 
     override fun onRefresh(refreshLayout: RefreshLayout) {
         pageNum = 1
-        loadData()
+        loadData(true)
     }
 
-    private fun loadData() {
+    private fun loadData(isRefresh: Boolean) {
         ApiUtil.instance
             .apiService
             .getUsers(pageNum, 10)
@@ -46,18 +46,14 @@ class UserListPresenter(view: UserListContract.View) : BasePresenter<UserListCon
 
                 override fun onNext(listResultBean: ResultBean<List<UserForListBean>>) {
                     view?.dismissLoading()
-                    if (listResultBean.isSuccess) {
-                        view?.showData(listResultBean, pageNum == 1)
-                        if ((listResultBean.data.size == 0) and (pageNum > 1))
-                            pageNum--
-                    } else {
-                        loadFail(listResultBean.message)
-                    }
+                    val data = listResultBean.data
+                    view?.showData(data, isRefresh)
+                    if (data.isNullOrEmpty() && pageNum > 1) pageNum--
                 }
 
                 private fun loadFail(msg: String) {
                     view?.showToast(msg)
-                    view?.showData(null, pageNum == 1)
+                    view?.showData(null, isRefresh)
                     if (pageNum > 1) pageNum--
                 }
 
@@ -93,9 +89,7 @@ class UserListPresenter(view: UserListContract.View) : BasePresenter<UserListCon
                 override fun onNext(stringResultBean: ResultBean<Any>) {
                     view?.dismissLoading()
                     view?.showToast(stringResultBean.message)
-                    if (stringResultBean.isSuccess) {
-                        view?.onDeleteSuccess(userBean)
-                    }
+                    view?.onDeleteSuccess(userBean)
                 }
 
                 override fun onError(message: String) {
