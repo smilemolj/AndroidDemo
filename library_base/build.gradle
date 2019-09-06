@@ -1,0 +1,25 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+android {
+    compileSdkVersion = 28
+    defaultConfig {
+        targetSdkVersion 28
+        minSdkVersion 16
+    }
+
+    compileOptions {
+        targetCompatibility = '1.8'
+        sourceCompatibility = '1.8'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    // Android Support
+    api 'androidx.multidex:multidex:2.0.1'
+    api 'androidx.appcompat:appcompat:1.0.2'
+    api 'androidx.lifecycle:lifecycle-runtime:2.0.0'
+    // RxJava
+    api 'io.reactivex.rxjava2:rxjava:2.2.2'
+}

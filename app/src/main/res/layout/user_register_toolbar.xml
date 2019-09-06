@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/demo_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:contentInsetStartWithNavigation="0dp"
+    app:navigationIcon="@drawable/ic_back_black">
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/add_tv"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="right"
+        android:gravity="center"
+        android:paddingRight="10dp"
+        android:text="@string/register"
+        android:textColor="@color/text_blue"
+        android:textSize="14sp" />
+</androidx.appcompat.widget.Toolbar>
