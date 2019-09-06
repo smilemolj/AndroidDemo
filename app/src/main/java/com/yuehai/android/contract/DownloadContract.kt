@@ -1,5 +1,6 @@
 package com.yuehai.android.contract
 
+import com.yuehai.android.widget.TipDialogFragment
 import library.base.IBasePresenter
 import library.base.IBaseView
 
@@ -8,6 +9,17 @@ import library.base.IBaseView
  */
 interface DownloadContract {
     interface View : IBaseView {
+        fun showTipDialog(msg: String, listener: TipDialogFragment.OnClickListener)
+        /**
+         * 检查读写权限
+         */
+        fun checkWritePermission(): Boolean
+
+        /**
+         * 申请读写权限
+         */
+        fun requestWritePermission()
+
         /**
          * 注意此回调方法在子线程
          */

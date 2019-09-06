@@ -29,7 +29,6 @@ class UserListActivity : BaseMvpActivity<UserListContract.Presenter>(), UserList
     UserListViewHolder.OnEditClickListener {
 
     private lateinit var adapter: CommonRecycleAdapter<UserForListBean>
-    private var confirmDialog: TipDialogFragment? = null
 
     override val innerViewId: Int
         get() = R.layout.activity_user_list
@@ -102,21 +101,9 @@ class UserListActivity : BaseMvpActivity<UserListContract.Presenter>(), UserList
 
     override fun alterConfirmDialog(
         msg: String,
-        onClickListener: TipDialogFragment.OnClickListener
+        listener: TipDialogFragment.OnClickListener
     ) {
-        if (confirmDialog == null) {
-            confirmDialog =
-                supportFragmentManager.findFragmentByTag("confirmDialog") as TipDialogFragment?
-            if (confirmDialog == null) {
-                confirmDialog = TipDialogFragment()
-                confirmDialog!!.isCancelable = false
-            }
-        }
-        if (!confirmDialog!!.isAdded) {
-            confirmDialog!!.setOnConfirmListener(onClickListener)
-            confirmDialog!!.setMessage(msg)
-            confirmDialog!!.show(supportFragmentManager, "confirmDialog")
-        }
+        TipDialogFragment(msg, listener).show(supportFragmentManager, "confirmDialog")
     }
 
     override fun onDeleteSuccess(userBean: UserForListBean) {

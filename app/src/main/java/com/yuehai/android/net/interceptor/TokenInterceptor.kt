@@ -95,13 +95,14 @@ class TokenInterceptor : Interceptor {
         }
 
     @Synchronized
-    private fun clearAndLogin() {
+    private fun clearAndLogin() {//子线程
         if (isLoginPage) return
         ApiUtil.instance.cancelAll()
         UserData.getInstance().clearUser()
-        BaseApplication.instance.startActivity(
+        val topActivity = BaseApplication.instance.topActivity
+        topActivity?.startActivity(
             Intent(
-                BaseApplication.instance,
+                topActivity,
                 LoginActivity::class.java
             )
         )

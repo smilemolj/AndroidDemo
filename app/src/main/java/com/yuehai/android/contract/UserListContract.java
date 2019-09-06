@@ -31,7 +31,7 @@ public interface UserListContract {
          *
          * @param msg 提示信息
          */
-        void alterConfirmDialog(String msg, TipDialogFragment.OnClickListener onClickListener);
+        void alterConfirmDialog(String msg, TipDialogFragment.OnClickListener listener);
 
         /**
          * 界面删除数据

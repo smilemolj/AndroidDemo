@@ -76,10 +76,6 @@ class UserListPresenter(view: UserListContract.View) : BasePresenter<UserListCon
                 override fun onConfirm() {
                     delete(userBean)
                 }
-
-                override fun onCancel() {
-
-                }
             })
     }
 

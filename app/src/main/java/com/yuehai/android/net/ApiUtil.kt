@@ -22,6 +22,6 @@ class ApiUtil private constructor() {
      * 取消请求
      */
     fun cancelAll() {
-        instance.cancelAll()
+        NetHelper.instance.cancelAll()
     }
 }

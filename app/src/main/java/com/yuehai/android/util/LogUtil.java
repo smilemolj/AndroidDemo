@@ -13,7 +13,7 @@ import com.yuehai.android.Contacts;
 public class LogUtil {
 
     private static boolean isDebug = BuildConfig.DEBUG;
-    private static final String TAG = Contacts.LOG_TAG;
+    private static final String TAG = Contacts.Companion.getLOG_TAG();
 
     public static void e(String msg) {
         e(TAG, msg);

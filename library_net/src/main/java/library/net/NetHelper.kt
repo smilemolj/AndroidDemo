@@ -35,7 +35,7 @@ class NetHelper private constructor() {
         val instance: NetHelper
             get() = ClassHolder.INSTANCE
 
-        private val BASE_URL get() = config.baseUrl
+        private val BASE_URL get() = config.baseUrl()
     }
 
     private object ClassHolder {
@@ -106,10 +106,10 @@ class NetHelper private constructor() {
             .readTimeout(READ_TIME_OUT, TimeUnit.MILLISECONDS)
             .writeTimeout(WRITE_TIME_OUT, TimeUnit.MILLISECONDS)
 //            .cache(mCache)
-        for (interceptor in config.interceptors) {
+        for (interceptor in config.interceptors()) {
             builder.addInterceptor(interceptor)
         }
-        for (interceptor in config.networkInterceptors) {
+        for (interceptor in config.networkInterceptors()) {
             builder.addNetworkInterceptor(interceptor)
         }
         builder.addNetworkInterceptor(mDownloadInterceptor)
@@ -154,7 +154,7 @@ class NetHelper private constructor() {
     private fun initRetrofit() {
         mRetrofit = Retrofit.Builder()
             .client(mOkHttpClient)
-            .addConverterFactory(MyGsonConverterFactory(mGson, config.responseVerify))
+            .addConverterFactory(MyGsonConverterFactory(mGson, config.responseVerify()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .baseUrl(BASE_URL)
             .build()

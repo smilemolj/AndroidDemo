@@ -16,11 +16,8 @@ import kotlinx.android.synthetic.main.tip_layout.*
  * 提示信息DialogFragment
  * Created by zhaoyuehai 2019/3/29
  */
-class TipDialogFragment : DialogFragment(), View.OnClickListener {
-
-    private var mOnClickListener: OnClickListener? = null
-
-    private var msg: String? = null
+class TipDialogFragment(private var msg: String, private var mOnClickListener: OnClickListener) :
+    DialogFragment(), View.OnClickListener {
 
     interface OnClickListener {
         /**
@@ -31,11 +28,7 @@ class TipDialogFragment : DialogFragment(), View.OnClickListener {
         /**
          * 之后会dismiss
          */
-        fun onCancel()
-    }
-
-    fun setOnConfirmListener(onClickListener: OnClickListener) {
-        this.mOnClickListener = onClickListener
+        fun onCancel() {}
     }
 
     override fun onCreateView(
@@ -48,22 +41,9 @@ class TipDialogFragment : DialogFragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (arguments != null) {
-            val msg = arguments!!.getString("msg")
-            if (msg != null)
-                tip_tv!!.text = msg
-        }
+        tip_tv.text = msg
         confirm_btn.setOnClickListener(this)
         cancel_btn.setOnClickListener(this)
-    }
-
-    fun setMessage(msg: String) {
-        this.msg = msg
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (msg != null) tip_tv!!.text = msg
     }
 
     override fun onStart() {
@@ -85,14 +65,13 @@ class TipDialogFragment : DialogFragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        if (mOnClickListener == null) return
         when (v.id) {
             R.id.confirm_btn -> {
-                mOnClickListener!!.onConfirm()
+                mOnClickListener.onConfirm()
                 dismiss()
             }
             R.id.cancel_btn -> {
-                mOnClickListener!!.onCancel()
+                mOnClickListener.onCancel()
                 dismiss()
             }
         }

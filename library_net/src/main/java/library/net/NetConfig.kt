@@ -1,22 +1,18 @@
 package library.net
 
 import okhttp3.Interceptor
-import java.util.*
 
 /**
  * Created by zhaoyuehai 2019/9/6
  */
-class NetConfig(val baseUrl: String, val responseVerify: ResponseVerify? = null) {
-    val interceptors: MutableList<Interceptor> = ArrayList()
-    val networkInterceptors: MutableList<Interceptor> = ArrayList()
+interface NetConfig {
 
-    fun addInterceptor(interceptor: Interceptor): NetConfig {
-        interceptors.add(interceptor)
-        return this
+    fun baseUrl(): String
+
+    fun responseVerify(): ResponseVerify? {
+        return null
     }
 
-    fun addNetworkInterceptor(interceptor: Interceptor): NetConfig {
-        networkInterceptors.add(interceptor)
-        return this
-    }
+    fun interceptors(): Array<Interceptor>
+    fun networkInterceptors(): Array<Interceptor>
 }

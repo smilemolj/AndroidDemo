@@ -32,7 +32,7 @@ object DownloadUtil {
         pathNames: Array<String>,
         fileName: String,
         listener: DownloadListener,
-        observer: Observer<File?>
+        observer: Observer<File>
     ) {
         download(url, null, pathNames, fileName, listener, observer)
     }
@@ -52,7 +52,7 @@ object DownloadUtil {
         pathNames: Array<String>,
         fileName: String,
         listener: DownloadListener,
-        observer: Observer<File?>
+        observer: Observer<File>
     ) {
         Observable.create(ObservableOnSubscribe<ResponseBody> { emitter ->
             val builder = Request.Builder()
@@ -75,11 +75,12 @@ object DownloadUtil {
             }
         })
             .map { responseBody ->
-                FileUtil.writeFile(
+                val file = FileUtil.writeFile(
                     responseBody.byteStream(),
                     FileUtil.getLocalFilePath(pathNames),
                     fileName
-                )
+                ) ?: throw ApiException(ApiException.DOWNLOAD_EXCEPTION, "文件写入失败")
+                file
             }
             .compose(RxUtil.io_main())
             .subscribe(observer)

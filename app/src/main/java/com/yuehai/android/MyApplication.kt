@@ -1,12 +1,8 @@
 package com.yuehai.android
 
-import com.yuehai.android.net.MyResponseVerify
-import com.yuehai.android.net.interceptor.HttpLogger
-import com.yuehai.android.net.interceptor.TokenInterceptor
+import com.yuehai.android.net.MyNetConfig
 import library.base.BaseApplication
-import library.net.NetConfig
 import library.net.NetHelper
-import okhttp3.logging.HttpLoggingInterceptor
 
 /**
  * Created by zhaoyuehai 2019/3/22
@@ -14,15 +10,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 class MyApplication : BaseApplication() {
     override fun onCreate() {
         super.onCreate()
-        NetHelper.init(getNetConfig())
-    }
-
-    private fun getNetConfig(): NetConfig {
-        return NetConfig(BuildConfig.BASE_URL, MyResponseVerify())
-            .addInterceptor(TokenInterceptor())
-            .addNetworkInterceptor(
-                HttpLoggingInterceptor(HttpLogger())
-                    .setLevel(HttpLoggingInterceptor.Level.BODY)
-            )
+        NetHelper.init(MyNetConfig())
     }
 }

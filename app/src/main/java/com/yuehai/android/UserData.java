@@ -36,7 +36,7 @@ public class UserData {
 
     public UserBean getUser() {
         if (user == null) {
-            SPUtil spUtil = SPUtil.getInstance(Contacts.SP_NAME);
+            SPUtil spUtil = SPUtil.getInstance(Contacts.Companion.getSP_NAME());
             boolean isLogin = spUtil.getBoolean(IS_LOGIN, false);
             if (isLogin) {
                 user = new UserBean();
@@ -58,7 +58,7 @@ public class UserData {
     public void saveUser(UserBean userBean) {
         this.user = userBean;
         LogUtil.e("======保存的过期时间是：" + new Date(user.getExpiration()));
-        SPUtil.getInstance(Contacts.SP_NAME)
+        SPUtil.getInstance(Contacts.Companion.getSP_NAME())
                 .getEdit()
                 .putBoolean(IS_LOGIN, true)
                 .putString(TOKEN, userBean.getAccessToken())
@@ -75,7 +75,7 @@ public class UserData {
     }
 
     public void clearUser() {
-        SPUtil.getInstance(Contacts.SP_NAME)
+        SPUtil.getInstance(Contacts.Companion.getSP_NAME())
                 .getEdit()
                 .putBoolean(IS_LOGIN, false)
                 .remove(TOKEN)
