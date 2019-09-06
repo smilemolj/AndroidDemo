@@ -1,5 +1,6 @@
 package com.yuehai.android
 
+import com.yuehai.android.net.MyResponseVerify
 import com.yuehai.android.net.interceptor.HttpLogger
 import com.yuehai.android.net.interceptor.TokenInterceptor
 import library.base.BaseApplication
@@ -17,7 +18,7 @@ class MyApplication : BaseApplication() {
     }
 
     private fun getNetConfig(): NetConfig {
-        return NetConfig(BuildConfig.BASE_URL)
+        return NetConfig(BuildConfig.BASE_URL, MyResponseVerify())
             .addInterceptor(TokenInterceptor())
             .addNetworkInterceptor(
                 HttpLoggingInterceptor(HttpLogger())

@@ -154,7 +154,7 @@ class NetHelper private constructor() {
     private fun initRetrofit() {
         mRetrofit = Retrofit.Builder()
             .client(mOkHttpClient)
-            .addConverterFactory(MyGsonConverterFactory.create(mGson))
+            .addConverterFactory(MyGsonConverterFactory(mGson, config.responseVerify))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .baseUrl(BASE_URL)
             .build()
