@@ -7,10 +7,7 @@ import library.net.NetHelper
 import library.net.exception.ApiException
 import library.net.util.FileUtil
 import library.net.util.RxUtil
-import okhttp3.Headers
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.ResponseBody
+import okhttp3.*
 import java.io.File
 
 /**
@@ -33,10 +30,9 @@ object DownloadUtil {
         pathNames: Array<String>,
         fileName: String,
         listener: DownloadListener,
-        observer: Observer<File>,
-        tag: Any? = null
+        observer: Observer<File>
     ) {
-        download(url, null, pathNames, fileName, listener, observer, tag)
+        download(url, null, pathNames, fileName, listener, observer)
     }
 
     /**
@@ -55,24 +51,20 @@ object DownloadUtil {
         pathNames: Array<String>,
         fileName: String,
         listener: DownloadListener,
-        observer: Observer<File>,
-        tag: Any? = null
-    ) {
+        observer: Observer<File>
+    ): Call {
+        val builder = Request.Builder()
+        if (headers != null) builder.headers(headers)
+        val request = builder
+            .tag(DownloadListener::class.java, listener)
+            .url(url)
+            .get()
+            .build()
+        val call = NetHelper.instance//okHttp同步下载
+            .oKHttpClient()
+            .newCall(request)
         Observable.create(ObservableOnSubscribe<ResponseBody> { emitter ->
-            val builder = Request.Builder()
-            if (headers != null) builder.headers(headers)
-            if (tag != null) builder.tag(tag.javaClass, tag)
-            val request = builder
-                .tag(DownloadListener::class.java, listener)
-                .url(url)
-                .get()
-
-                .build()
-            val responseBody = NetHelper.instance//okHttp同步下载
-                .oKHttpClient()
-                .newCall(request)
-                .execute()
-                .body()
+            val responseBody = call.execute().body()
             if (responseBody != null) {
                 emitter.onNext(responseBody)
                 emitter.onComplete()
@@ -90,28 +82,29 @@ object DownloadUtil {
             }
             .compose(RxUtil.io_main())
             .subscribe(observer)
+        return call
     }
 
-    /**
-     * 取消下载
-     */
-    fun cancelDownload(tag: Any) {
-        val dispatcher = NetHelper.instance
-            .oKHttpClient()
-            .dispatcher()
-        if (dispatcher.runningCallsCount() > 0) {
-            for (call in dispatcher.runningCalls()) {
-                if (tag == call.request().tag(tag.javaClass)) {
-                    call.cancel()
-                }
-            }
-        }
-        if (dispatcher.queuedCallsCount() > 0) {
-            for (call in dispatcher.queuedCalls()) {
-                if (tag == call.request().tag(tag.javaClass)) {
-                    call.cancel()
-                }
-            }
-        }
-    }
+//    /**
+//     * 取消下载
+//     */
+//    fun cancelDownload(tag: Any) {
+//        val dispatcher = NetHelper.instance
+//            .oKHttpClient()
+//            .dispatcher()
+//        if (dispatcher.runningCallsCount() > 0) {
+//            for (call in dispatcher.runningCalls()) {
+//                if (tag == call.request().tag(tag.javaClass)) {
+//                    call.cancel()
+//                }
+//            }
+//        }
+//        if (dispatcher.queuedCallsCount() > 0) {
+//            for (call in dispatcher.queuedCalls()) {
+//                if (tag == call.request().tag(tag.javaClass)) {
+//                    call.cancel()
+//                }
+//            }
+//        }
+//    }
 }

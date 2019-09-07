@@ -10,6 +10,7 @@ import library.base.BasePresenter
 import library.net.ResultObserver
 import library.net.download.DownloadListener
 import library.net.download.DownloadUtil
+import okhttp3.Call
 import okhttp3.Headers
 import java.io.File
 
@@ -18,7 +19,7 @@ import java.io.File
  */
 class DownloadPresenter(view: DownloadContract.View) : BasePresenter<DownloadContract.View>(view),
     DownloadContract.Presenter, DownloadListener {
-
+    private var downloadCall: Call? = null
     override fun download(url: String) {
         if (view?.checkWritePermission() == false) {
             view?.showTipDialog("下载文件需要手机读写权限，请您允许！", object : TipDialogFragment.OnClickListener {
@@ -45,7 +46,7 @@ class DownloadPresenter(view: DownloadContract.View) : BasePresenter<DownloadCon
             view?.showToast("下载地址格式错误！")
             return
         }
-        DownloadUtil.download(
+        downloadCall = DownloadUtil.download(
             url,
             Headers.Builder()
                 .add(TokenInterceptor.HEADER_NO_TOKEN)
@@ -68,8 +69,7 @@ class DownloadPresenter(view: DownloadContract.View) : BasePresenter<DownloadCon
                     view?.showToast("下载成功！")
                     view?.setMessage("下载成功！\n文件大小：${f.length() / 1024 / 1024}M\n文件路径：${f.absolutePath}")
                 }
-            }, this
-        )
+            })
     }
 
     override fun onProgress(currentLength: Long, totalLength: Long) {
@@ -77,6 +77,8 @@ class DownloadPresenter(view: DownloadContract.View) : BasePresenter<DownloadCon
     }
 
     override fun onBack() {
-        DownloadUtil.cancelDownload(this)
+        if (downloadCall?.isCanceled == false) {
+            downloadCall?.cancel()
+        }
     }
 }
